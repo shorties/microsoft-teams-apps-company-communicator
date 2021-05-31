@@ -82,6 +82,11 @@ export const getTeams = async (): Promise<any> => {
     return await axios.get(url);
 }
 
+export const getAppSettings = async (): Promise<any> => {
+    let url = baseAxiosUrl + "/settings";
+    return await axios.get(url);
+}
+
 export const getConsentSummaries = async (id: number): Promise<any> => {
     let url = baseAxiosUrl + "/draftnotifications/consentSummaries/" + id;
     return await axios.get(url);
