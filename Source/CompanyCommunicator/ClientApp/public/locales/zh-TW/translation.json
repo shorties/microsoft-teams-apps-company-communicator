@@ -97,5 +97,10 @@
   "ScheduledSendDescription": "选择日期和时间来安排您的邮件。请安排至少30分钟的未来。",
   "Add": "加",
   "Buttons": "按钮",
-  "NoButtons": "未定义按钮。单击 （+） 以在邮件上包含按钮和操作。"
+  "NoButtons": "未定义按钮。单击 （+） 以在邮件上包含按钮和操作。",
+  "TargetingConfig": "您正在以定位模式配置公司通信器。",
+  "TargetingTeamChannel": "请检查以下的团队和渠道，其中作者应用程序正在安装：",
+  "TargetingLoggedUsr": "已记录的用户：",
+  "ConfigSave": "请单击 保存 以开始。",
+  "TargetingNotAuthorized": "您未授权在定位模式下设置公司通信器。请联系主管理员之一。"
 }

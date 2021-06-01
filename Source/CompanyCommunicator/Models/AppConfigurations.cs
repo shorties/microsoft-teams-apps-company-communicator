@@ -19,5 +19,10 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Models
         /// Gets or sets application TargetingEnabled.
         /// </summary>
         public string TargetingEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets application MasterAdminUpns.
+        /// </summary>
+        public string MasterAdminUpns { get; set; }
     }
 }

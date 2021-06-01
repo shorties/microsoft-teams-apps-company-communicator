@@ -97,5 +97,10 @@
   "ScheduledSendDescription": "메시지를 예약할 날짜와 시간을 선택합니다. 향후 최소 30분 정도 예약하시기 바랍니다.",
   "Add": "더하다",
   "Buttons": "단추",
-  "NoButtons": "정의된 버튼이 없습니다. (+)를 클릭하여 메시지에 단추와 작업을 포함합니다."
+  "NoButtons": "정의된 버튼이 없습니다. (+)를 클릭하여 메시지에 단추와 작업을 포함합니다.",
+  "TargetingConfig": "타게팅 모드에서 회사 커뮤니케이터를 구성하고 있습니다.",
+  "TargetingTeamChannel": "작성자 앱이 설치된 팀과 채널 아래를 확인하십시오.",
+  "TargetingLoggedUsr": "기록된 사용자:",
+  "ConfigSave": "저장을 클릭하여 시작하십시오.",
+  "TargetingNotAuthorized": "타게팅 모드에서 회사 커뮤니케이터를 설정할 권한이 없습니다. 마스터 관리자 중 한 명에게 문의하십시오."
 }

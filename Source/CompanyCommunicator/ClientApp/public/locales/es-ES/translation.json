@@ -98,6 +98,11 @@
   "ScheduledSendDescription": "Seleccione una fecha y hora para programar el mensaje. Por favor, programe al menos 30 minutos en el futuro.",
   "Add": "Agregar",
   "Buttons": "Botones",
-  "NoButtons": "Sin botones definidos. Haga clic en (+) para incluir botones y acciones en el mensaje."
+  "NoButtons": "Sin botones definidos. Haga clic en (+) para incluir botones y acciones en el mensaje.",
+  "TargetingConfig": "Está configurando Company Communicator en modo targeting.",
+  "TargetingTeamChannel": "Compruebe a continuación el equipo y el canal donde se está instalando la aplicación Authors:",
+  "TargetingLoggedUsr": "Usuario registrado:",
+  "ConfigSave": "Haga clic en Guardar/Save para empezar.",
+  "TargetingNotAuthorized": "No está autorizado a configurar Company Communicator en modo targeting. Póngase en contacto con uno de los administradores maestros."
 }
   

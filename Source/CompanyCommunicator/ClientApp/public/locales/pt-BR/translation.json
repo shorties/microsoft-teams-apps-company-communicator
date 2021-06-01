@@ -98,5 +98,10 @@
   "ScheduledSendDescription": "Selecione uma data e hora para agendar sua mensagem. Por favor, agende pelo menos 30 minutos no futuro.",
   "Add": "Incluir",
   "Buttons": "Botões",
-  "NoButtons": "Sem botões definidos. Clique (+) para incluir botões e ações na mensagem."
+  "NoButtons": "Sem botões definidos. Clique (+) para incluir botões e ações na mensagem.",
+  "TargetingConfig": "Você está configurando o Company Communicator no modo de segmentação.",
+  "TargetingTeamChannel": "Confira abaixo a equipe e o canal onde o aplicativo Autores está sendo instalado:",
+  "TargetingLoggedUsr": "Usuário registrado:",
+  "ConfigSave": "Clique em Salvar para começar.",
+  "TargetingNotAuthorized": "Você não está autorizado a configurar o Company Communicator no modo de segmentação. Entre em contato com um dos administradores."
 }

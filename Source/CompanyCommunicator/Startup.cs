@@ -81,6 +81,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
                     botOptions.AuthorAppId = configuration.GetValue<string>("AuthorAppId");
                     botOptions.AuthorAppPassword = configuration.GetValue<string>("AuthorAppPassword");
                     botOptions.TargetingEnabled = configuration.GetValue<string>("TargetingEnabled");
+                    botOptions.MasterAdminUpns = configuration.GetValue<string>("MasterAdminUpns");
                 });
             services.AddOptions<BotFilterMiddlewareOptions>()
                 .Configure<IConfiguration>((botFilterMiddlewareOptions, configuration) =>

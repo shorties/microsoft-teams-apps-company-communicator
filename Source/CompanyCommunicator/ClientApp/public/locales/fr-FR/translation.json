@@ -97,5 +97,10 @@
   "ScheduledSendDescription": "Sélectionnez une date et une heure pour planifier votre message. Veuillez planifier au moins 30 minutes à l’avenir.",
   "Add": "Ajouter",
   "Buttons": "Boutons",
-  "NoButtons": "Aucun bouton défini. Cliquez (+) pour inclure des boutons et des actions sur le message."
+  "NoButtons": "Aucun bouton défini. Cliquez (+) pour inclure des boutons et des actions sur le message.",
+  "TargetingConfig": "Vous configurez Company Communicator en mode ciblage.",
+  "TargetingTeamChannel": "Veuillez vérifier ci-dessous l’équipe et le canal où l’application Auteurs est installée :",
+  "TargetingLoggedUsr": "Utilisateur connecté :",
+  "ConfigSave": "Cliquez sur Enregistrer pour commencer.",
+  "TargetingNotAuthorized": "Vous n’êtes pas autorisé à configurer Company Communicator en mode ciblage. Veuillez contacter l’un des administrateurs principaux."
 }

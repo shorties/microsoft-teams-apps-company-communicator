@@ -39,10 +39,12 @@ namespace Microsoft.Teams.Apps.DIConnect.Controllers
         {
             var appId = this.botOptions.AuthorAppId;
             var targetingEnabled = this.botOptions.TargetingEnabled;
+            var masterAdminUpns = this.botOptions.MasterAdminUpns;
             var response = new AppConfigurations()
             {
                 AppId = appId,
                 TargetingEnabled = targetingEnabled,
+                MasterAdminUpns = masterAdminUpns,
             };
 
             return this.Ok(response);
