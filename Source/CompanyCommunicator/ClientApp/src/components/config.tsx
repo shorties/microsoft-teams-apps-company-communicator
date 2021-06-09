@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { getBaseUrl } from '../configVariables';
 import { getAppSettings } from "../apis/messageListApi";
-import { Loader } from '@fluentui/react-northstar';
+import { Loader, Label } from '@fluentui/react-northstar';
 import { withTranslation, WithTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 
@@ -55,18 +55,21 @@ class Configuration extends React.Component<ConfigProps, IConfigState> {
             saveEvent.notifySuccess();
         });
 
+        // get teams context variables and store in the state
+        microsoftTeams.getContext(context => {
+            setState({
+                channelId: context.channelId,
+                channelName: context.channelName,
+                teamName: context.teamName,
+                userPrincipalName: context.userPrincipalName
+            });
+        });
+
         // get the app settings and based on the targeting configuration and user id 
         // decides if the save is enabled or not
         this.getAppSettings().then(() => {
             setState({ loading: false });
-            microsoftTeams.getContext(context => {
-                setState({
-                    channelId: context.channelId,
-                    channelName: context.channelName,
-                    teamName: context.teamName,
-                    userPrincipalName: context.userPrincipalName
-                });
-            });
+            
         });
     }
 
@@ -118,8 +121,8 @@ class Configuration extends React.Component<ConfigProps, IConfigState> {
                     <div>
                         <h3>{this.localize("TargetingConfig")}</h3>
                         <p>{this.localize("TargetingTeamChannel")}</p>
-                        <p><b>{this.state.teamName} / {this.state.channelName}</b> ({this.state.channelId})</p>
-                        <p><b>{this.localize("TargetingLoggedUsr")}</b> {this.state.userPrincipalName}</p>
+                        <Label circular content={this.state.teamName} /> <Label circular content={this.state.channelName} />
+                        <p><b>{this.localize("TargetingLoggedUsr")}</b> {this.state.userPrincipalName} </p>
                         <h3>{this.localize("ConfigSave")}</h3>
                     </div>
                 )

@@ -9,8 +9,9 @@ import ScheduledMessages from '../ScheduledMessages/ScheduledMessages';
 import './tabContainer.scss';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { getBaseUrl } from '../../configVariables';
-import { Accordion, Button, Flex } from '@fluentui/react-northstar';
+import { Accordion, Button, Flex, Label } from '@fluentui/react-northstar';
 import { getDraftMessagesList, getScheduledMessagesList } from '../../actions';
+import { getAppSettings } from "../../apis/messageListApi";
 import { connect } from 'react-redux';
 import { TFunction } from "i18next";
 
@@ -32,23 +33,57 @@ export interface ITaskInfoProps extends WithTranslation {
 
 export interface ITabContainerState {
     url: string;
+    channelId?: string;
+    channelName?: string;
+    teamName?: string;
+    userPrincipalName?: string;
+    loading: boolean;
 }
 
 class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
     readonly localize: TFunction;
+    targetingEnabled: boolean; // property to store value indicating if the targeting mode is enabled or not
+    masterAdminUpns: string; // property to store value with the master admins
+
     constructor(props: ITaskInfoProps) {
         super(props);
         this.localize = this.props.t;
+        this.targetingEnabled = false; // by default targeting is disabled
+        this.masterAdminUpns = "";
         this.state = {
-            url: getBaseUrl() + "/newmessage?locale={locale}"
+            loading: true,
+            url: getBaseUrl() + "/newmessage?locale={locale}",
+            channelId: "",
+            channelName: "",
+            teamName: "",
+            userPrincipalName: ""
         }
         this.escFunction = this.escFunction.bind(this);
     }
 
     public componentDidMount() {
+        const setState = this.setState.bind(this); 
+
         microsoftTeams.initialize();
         //- Handle the Esc key
         document.addEventListener("keydown", this.escFunction, false);
+
+        // get the app settings and based on the targeting configuration and user id 
+        // decides if the save is enabled or not
+        this.getAppSettings().then(() => {
+            setState({ loading: false });
+        });
+
+        // get teams context variables and store in the state
+        microsoftTeams.getContext(context => {
+            setState({
+                channelId: context.channelId,
+                channelName: context.channelName,
+                teamName: context.teamName,
+                userPrincipalName: context.userPrincipalName
+            });
+        });
+
     }
 
     public componentWillUnmount() {
@@ -93,10 +128,16 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
                 },
             }
         ]
+
+        
         return (
             <Flex className="tabContainer" column fill gap="gap.small">
                 <Flex className="newPostBtn" hAlign="end" vAlign="end">
-                    <Button content={this.localize("NewMessage")} onClick={this.onNewMessage} primary />
+                    {(this.targetingEnabled) &&
+                        <div><Label circular content={this.state.teamName} /> <Label circular content={this.state.channelName} /></div>}
+                    <Flex.Item push>
+                        <Button content={this.localize("NewMessage")} onClick={this.onNewMessage} primary />
+                    </Flex.Item>
                 </Flex>
                 <Flex className="messageContainer">
                     <Flex.Item grow={1} >
@@ -123,6 +164,15 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
         };
 
         microsoftTeams.tasks.startTask(taskInfo, submitHandler);
+    }
+
+    // get the app configuration values and set targeting mode from app settings
+    private getAppSettings = async () => {
+        let response = await getAppSettings();
+        if (response.data) {
+            this.targetingEnabled = (response.data.targetingEnabled === 'true'); //get the targetingenabled value
+            this.masterAdminUpns = response.data.masterAdminUpns; //get the array of master admins
+        }
     }
 }
 

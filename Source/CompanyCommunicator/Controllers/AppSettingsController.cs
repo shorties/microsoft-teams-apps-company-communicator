@@ -1,6 +1,6 @@
-﻿// <copyright file="AppSettingsController.cs" company="Microsoft Corporation">
+﻿// <copyright file="AppSettingsController.cs" company="Microsoft">
 // Copyright (c) Microsoft Corporation.
-// Licensed under the MIT license.
+// Licensed under the MIT License.
 // </copyright>
 
 namespace Microsoft.Teams.Apps.DIConnect.Controllers

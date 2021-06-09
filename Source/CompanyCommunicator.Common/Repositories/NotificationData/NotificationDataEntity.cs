@@ -87,6 +87,11 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         public bool IsImportant { get; set; }
 
         /// <summary>
+        /// Gets or sets channel id for the notification.
+        /// </summary>
+        public string ChannelId { get; set; }
+
+        /// <summary>
         /// Gets or sets a value with the JSON describing the buttons for the adaptive card.
         /// </summary>
         public string Buttons { get; set; }

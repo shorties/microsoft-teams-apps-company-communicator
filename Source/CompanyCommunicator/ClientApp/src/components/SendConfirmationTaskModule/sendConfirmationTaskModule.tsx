@@ -39,6 +39,7 @@ export interface IMessage {
     buttonTitle?: string;
     buttons: string;
     isImportant?: boolean;
+    channelId?: string;
 }
 
 export interface SendConfirmationTaskModuleProps extends RouteComponentProps, WithTranslation {
@@ -59,7 +60,8 @@ class SendConfirmationTaskModule extends React.Component<SendConfirmationTaskMod
     private initMessage = {
         id: "",
         title: "",
-        buttons: "[]"
+        buttons: "[]",
+        channelId: "",
     };
 
     private card: any;

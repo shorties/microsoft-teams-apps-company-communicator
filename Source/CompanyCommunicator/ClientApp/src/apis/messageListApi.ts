@@ -11,13 +11,28 @@ export const getSentNotifications = async (): Promise<any> => {
     return await axios.get(url);
 }
 
+export const getChannelSentNotifications = async (channelId: string): Promise<any> => {
+    let url = baseAxiosUrl + "/sentnotifications/channel/" + channelId;
+    return await axios.get(url);
+}
+
 export const getScheduledNotifications = async (): Promise<any> => {
     let url = baseAxiosUrl + "/draftnotifications/scheduled";
     return await axios.get(url);
 }
 
+export const getChannelScheduledNotifications = async (channelId: string): Promise<any> => {
+    let url = baseAxiosUrl + "/draftnotifications/scheduled/channel/" + channelId;
+    return await axios.get(url);
+}
+
 export const getDraftNotifications = async (): Promise<any> => {
     let url = baseAxiosUrl + "/draftnotifications";
+    return await axios.get(url);
+}
+
+export const getChannelDraftNotifications = async (channelId: string): Promise<any> => {
+    let url = baseAxiosUrl + "/draftnotifications/channel/" + channelId;
     return await axios.get(url);
 }
 

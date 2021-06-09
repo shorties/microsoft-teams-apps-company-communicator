@@ -54,7 +54,8 @@ export interface IDraftMessage {
     isImportant: boolean, // indicates if the message is important
     isScheduled: boolean, // indicates if the message is scheduled
     ScheduledDate: Date, // stores the scheduled date
-    Buttons: string // stores tha card buttons (JSON)
+    Buttons: string, // stores the card buttons (JSON)
+    channelId?: string // id of the channel where the message was created
 }
 
 export interface formState {
@@ -95,7 +96,8 @@ export interface formState {
     DMYHour: string, //hour selected
     DMYMins: string, //mins selected
     futuredate: boolean, //if the date is in the future (valid schedule)
-    values: any[] //button values collection
+    values: any[], //button values collection
+    channelId?: string //id of the channel where the message was created
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -148,7 +150,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             DMYHour: this.getDateHour(TempDate.toUTCString()), //initialize with the current hour (rounded up)
             DMYMins: this.getDateMins(TempDate.toUTCString()), //initialize with the current minute (rounded up)
             futuredate: false, //by default the date is not in the future
-            values: [] //by default there are no buttons on the adaptive card
+            values: [], //by default there are no buttons on the adaptive card
+            channelId: "" //channel id is empty by default
         }
         this.fileInput = React.createRef();
         this.handleImageSelection = this.handleImageSelection.bind(this);
@@ -177,7 +180,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         DMY: this.getDateObject(this.state.scheduledDate),
                         DMYHour: this.getDateHour(this.state.scheduledDate),
                         DMYMins: this.getDateMins(this.state.scheduledDate),
-                        values: this.state.values
+                        values: this.state.values,
+                        channelId: this.state.channelId
                     })
                 });
                 this.getGroupData(id).then(() => {
@@ -198,7 +202,12 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                     if (this.state.btnLink) {
                         let link = this.state.btnLink;
                         adaptiveCard.onExecuteAction = function (action) { window.open(link, '_blank'); };
-                    }
+                        }
+                    microsoftTeams.getContext(context => {
+                        this.setState({
+                                channelId: context.channelId,
+                            });
+                     });
                 })
             }
         });
@@ -376,6 +385,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 selectedSchedule: draftMessageDetail.isScheduled,
                 selectedImportant: draftMessageDetail.isImportant,
                 scheduledDate: draftMessageDetail.scheduledDate,
+                channelId: draftMessageDetail.channelId,
             });
 
             // set card properties
@@ -447,6 +457,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             <Flex className="scrollableContent">
                                 <Flex.Item size="size.half">
                                     <Flex column className="formContentContainer">
+                                        Channel ID: {this.state.channelId}
                                         <Input className="inputField"
                                             value={this.state.title}
                                             label={this.localize("TitleText")}
@@ -534,6 +545,7 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                             <Flex className="scrollableContent">
                                 <Flex.Item size="size.half">
                                     <Flex column className="formContentContainer">
+                                        Channel ID: {this.state.channelId}
                                         <h3>{this.localize("SendHeadingText")}</h3>
                                         <RadioGroup
                                             className="radioBtns"
@@ -1009,7 +1021,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             isScheduled: this.state.selectedSchedule,
             isImportant: this.state.selectedImportant,
             ScheduledDate: new Date(this.state.scheduledDate),
-            Buttons: JSON.stringify(this.state.values)
+            Buttons: JSON.stringify(this.state.values),
+            channelId: this.state.channelId
         };
 
         if (this.state.exists) {
