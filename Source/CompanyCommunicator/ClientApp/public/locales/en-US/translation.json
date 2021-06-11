@@ -103,6 +103,8 @@
   "TargetingTeamChannel": "Please check below the team and channel where the Authors app is being installed:",
   "TargetingLoggedUsr": "Logged User:",
   "ConfigSave": "Please click Save to get started.",
-  "TargetingNotAuthorized": "You are not authorized to setup Company Communicator in targeting mode. Please contact one of the master admins."
+  "TargetingNotAuthorized": "You are not authorized to setup Company Communicator in targeting mode. Please contact one of the master admins.",
+  "ManageGroups": "Manage Groups",
+  "GroupAlreadyIncluded": "The group is already associated to this channel."
 
 }

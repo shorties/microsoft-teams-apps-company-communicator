@@ -7,7 +7,6 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { Loader, List, Flex, Text } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
-import { getAppSettings } from "../../apis/messageListApi";
 import './draftMessages.scss';
 import { selectMessage, getDraftMessagesList, getScheduledMessagesList, getMessagesList } from '../../actions';
 import { getBaseUrl } from '../../configVariables';
@@ -161,15 +160,6 @@ class DraftMessages extends React.Component<IMessageProps, IMessageState> {
             styles: { margin: '0.2rem 0.2rem 0 0' },
         }];
         return out;
-    }
-
-    // get the app configuration values and set targeting mode from app settings
-    private getAppSettings = async () => {
-        let response = await getAppSettings();
-        if (response.data) {
-            this.targetingEnabled = (response.data.targetingEnabled === 'true'); //get the targetingenabled value
-            this.masterAdminUpns = response.data.masterAdminUpns; //get the array of master admins
-        }
     }
 
     private onOpenTaskModule = (event: any, url: string, title: string) => {

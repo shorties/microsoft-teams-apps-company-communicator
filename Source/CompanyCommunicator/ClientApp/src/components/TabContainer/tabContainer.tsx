@@ -97,6 +97,8 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
     }
 
     public render(): JSX.Element {
+        var isMaster = this.isMasterAdmin(this.masterAdminUpns, this.state.userPrincipalName);
+
         const panels = [
             {
                 title: this.localize('DraftMessagesSectionTitle'),
@@ -132,12 +134,14 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
         
         return (
             <Flex className="tabContainer" column fill gap="gap.small">
-                <Flex className="newPostBtn" hAlign="end" vAlign="end">
+                <Flex className="newPostBtn" hAlign="end" vAlign="end" gap="gap.small">
                     {(this.targetingEnabled) &&
                         <div><Label circular content={this.state.teamName} /> <Label circular content={this.state.channelName} /></div>}
                     <Flex.Item push>
                         <Button content={this.localize("NewMessage")} onClick={this.onNewMessage} primary />
                     </Flex.Item>
+                    {((this.targetingEnabled) && (isMaster)) &&
+                        <Button content={this.localize("ManageGroups")} onClick={this.ManageGroups} />}
                 </Flex>
                 <Flex className="messageContainer">
                     <Flex.Item grow={1} >
@@ -166,6 +170,20 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
         microsoftTeams.tasks.startTask(taskInfo, submitHandler);
     }
 
+    public ManageGroups = () => {
+        var strUrl = getBaseUrl() + "/managegroups?locale={locale}";
+
+        let taskInfo: ITaskInfo = {
+            url: strUrl,
+            title: this.localize("ManageGroups"),
+            height: 530,
+            width: 1000,
+            fallbackUrl: strUrl,
+        }
+
+        microsoftTeams.tasks.startTask(taskInfo);
+    }
+
     // get the app configuration values and set targeting mode from app settings
     private getAppSettings = async () => {
         let response = await getAppSettings();
@@ -173,6 +191,20 @@ class TabContainer extends React.Component<ITaskInfoProps, ITabContainerState> {
             this.targetingEnabled = (response.data.targetingEnabled === 'true'); //get the targetingenabled value
             this.masterAdminUpns = response.data.masterAdminUpns; //get the array of master admins
         }
+    }
+
+    //returns true if the userUpn is listed on masterAdminUpns
+    private isMasterAdmin = (masterAdminUpns: string, userUpn?: string) => {
+        var ret = false; // default return value
+        var masterAdmins = masterAdminUpns.toLowerCase().split(/;|,/); //splits the string and convert to lowercase
+
+        //if we get a userUpn as parameter
+        if (userUpn) {
+            //gets the index of the user on the master admin array
+            if (masterAdmins.indexOf(userUpn.toLowerCase()) >= 0) { ret = true; }
+        }
+
+        return ret;
     }
 }
 

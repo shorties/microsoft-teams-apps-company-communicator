@@ -92,6 +92,24 @@ export const createDraftNotification = async (payload: {}): Promise<any> => {
     return await axios.post(url, payload);
 }
 
+//creates an association between a group and a channel (for targeting)
+export const createGroupAssociation = async (payload: {}): Promise<any> => {
+    let url = baseAxiosUrl + "/groupassociations";
+    return await axios.post(url, payload);
+}
+
+//deletes an association between a group and a channel (for targeting)
+export const deleteGroupAssociation = async (key: string): Promise<any> => {
+    let url = baseAxiosUrl + "/groupassociations/" + key;
+    return await axios.delete(url);
+}
+
+//gets all groups associated to a specific channel (for targeting)
+export const getGroupAssociations = async (channelId: string): Promise<any> => {
+    let url = baseAxiosUrl + "/groupassociations/" + channelId;
+    return await axios.get(url);
+}
+
 export const getTeams = async (): Promise<any> => {
     let url = baseAxiosUrl + "/teamdata";
     return await axios.get(url);

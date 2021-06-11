@@ -11,7 +11,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Extensions
     /// <summary>
     /// Extension class for <see cref="SendQueueMessageContent"/>.
     /// </summary>
-    public static class SendQueueMessageContentExtension
+    public static class SendQueueMessageContentExtensions
     {
         /// <summary>
         /// Get service url.
