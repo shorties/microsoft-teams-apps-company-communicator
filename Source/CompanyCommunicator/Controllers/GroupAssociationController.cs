@@ -8,7 +8,9 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Authentication;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.GroupAssociationData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Models;
     using Microsoft.Teams.Apps.CompanyCommunicator.Repositories.Extensions;
@@ -17,6 +19,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
     /// Controller for the Groups Association data.
     /// </summary>
     [Route("api/groupassociations")]
+    [Authorize(PolicyNames.MustBeValidUpnPolicy)]
     public class GroupAssociationController : ControllerBase
     {
         private readonly IGroupAssociationDataRepository groupAssociationDataRepository;
