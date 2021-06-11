@@ -102,5 +102,7 @@
   "TargetingTeamChannel": "Authors アプリがインストールされているチームとチャネルの下を確認してください。",
   "TargetingLoggedUsr": "ログに記録されたユーザー:",
   "ConfigSave": "[保存] をクリックして開始してください。",
-  "TargetingNotAuthorized": "ターゲティング モードで会社のコミュニケーターをセットアップする権限がありません。マスター管理者の 1 人に問い合わせてください。"
+  "TargetingNotAuthorized": "ターゲティング モードで会社のコミュニケーターをセットアップする権限がありません。マスター管理者の 1 人に問い合わせてください。",
+  "ManageGroups": "グループの管理",
+  "GroupAlreadyIncluded": "グループは既にこのチャネルに関連付けされています。"
 }

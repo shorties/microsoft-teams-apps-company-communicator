@@ -102,5 +102,7 @@
   "TargetingTeamChannel": "Veuillez vérifier ci-dessous l’équipe et le canal où l’application Auteurs est installée :",
   "TargetingLoggedUsr": "Utilisateur connecté :",
   "ConfigSave": "Cliquez sur Enregistrer pour commencer.",
-  "TargetingNotAuthorized": "Vous n’êtes pas autorisé à configurer Company Communicator en mode ciblage. Veuillez contacter l’un des administrateurs principaux."
+  "TargetingNotAuthorized": "Vous n’êtes pas autorisé à configurer Company Communicator en mode ciblage. Veuillez contacter l’un des administrateurs principaux.",
+  "ManageGroups": "Gérer les groupes",
+  "GroupAlreadyIncluded": "Le groupe est déjà associé à ce canal."
 }
