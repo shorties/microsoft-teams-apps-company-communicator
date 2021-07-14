@@ -86,7 +86,7 @@ var ManageGroups = /** @class */ (function (_super) {
                                     React.createElement(react_northstar_1.Label, { circular: true, content: _this.state.channelName })),
                                 React.createElement("div", null,
                                     React.createElement(react_northstar_1.Text, { content: _this.localize("CardImage") })),
-                                React.createElement("div", { style: { minHeight: 100, maxHeight: 100, minWidth: 100, maxWidth: 100 } },
+                                React.createElement("div", { style: { minHeight: 110, maxHeight: 110, minWidth: 400, maxWidth: 100 } },
                                     React.createElement(react_northstar_1.Image, { fluid: true, src: _this.state.imageLink })),
                                 React.createElement("div", { style: { minHeight: 40 } },
                                     React.createElement(react_northstar_1.Flex, { gap: "gap.smaller", vAlign: "end", className: "inputField" },
@@ -434,7 +434,7 @@ var ManageGroups = /** @class */ (function (_super) {
         var file = this.fileInput.current.files[0];
         if (file) { //if we have a file
             //resize the image to fit in the adaptivecard
-            react_image_file_resizer_1.default.imageFileResizer(file, 100, 100, 'JPEG', 100, 0, function (uri) {
+            react_image_file_resizer_1.default.imageFileResizer(file, 400, 100, 'JPEG', 80, 0, function (uri) {
                 if (uri.toString().length < 30720) {
                     //lets set the state with the image value
                     _this.setState({

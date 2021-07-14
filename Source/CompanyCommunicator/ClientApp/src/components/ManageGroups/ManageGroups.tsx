@@ -144,7 +144,7 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
         const file = this.fileInput.current.files[0];
         if (file) { //if we have a file
             //resize the image to fit in the adaptivecard
-            Resizer.imageFileResizer(file, 100, 100, 'JPEG', 100, 0,
+            Resizer.imageFileResizer(file, 400, 100, 'JPEG', 80, 0,
                 uri => {
                     if (uri.toString().length < 30720) {
                         //lets set the state with the image value
@@ -190,7 +190,7 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
                                 <div>
                                     <Text content={this.localize("CardImage")} />
                                 </div>
-                                <div style={{ minHeight: 100, maxHeight: 100, minWidth: 100, maxWidth: 100}}>
+                                <div style={{ minHeight: 110, maxHeight: 110, minWidth: 400, maxWidth: 100}}>
                                     <Image fluid src={this.state.imageLink} />
                                 </div>
                                 <div style={{ minHeight: 40 }}>

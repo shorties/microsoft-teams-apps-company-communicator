@@ -292,10 +292,10 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         const file = this.fileInput.current.files[0];
         if (file) { //if we have a file
             //resize the image to fit in the adaptivecard
+            var cardsize= JSON.stringify(this.card).length;
             Resizer.imageFileResizer(file, 400, 400, 'JPEG', 80, 0,
                 uri => {
-                    //alert("uri.toString().length: " + uri.toString().length);
-                    if (uri.toString().length < 30720) {
+                    if (uri.toString().length < 30720-cardsize) {
                         //everything is ok with the image, lets set it on the card and update
                         setCardImageLink(this.card, uri.toString());
                         this.updateCard();
@@ -306,8 +306,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                         );
                     } else {
                         //images bigger than 32K cannot be saved, set the error message to be presented
+                        var errormsg = this.localize("ErrorImageTooBig") + " Due to the size of image used as card logo, this one in JPEG format needs to be smaller than " + (30720 - cardsize) + " bytes.";
                         this.setState({
-                            errorImageUrlMessage: this.localize("ErrorImageTooBig")
+                            errorImageUrlMessage: errormsg
                         });
                     }
 
