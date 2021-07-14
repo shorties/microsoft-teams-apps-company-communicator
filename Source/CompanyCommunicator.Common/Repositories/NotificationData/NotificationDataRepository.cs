@@ -155,6 +155,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     CreatedBy = draftNotificationEntity.CreatedBy,
                     CreatedDate = draftNotificationEntity.CreatedDate,
                     ChannelId = draftNotificationEntity.ChannelId,
+                    ChannelImage = draftNotificationEntity.ChannelImage,
+                    ChannelTitle = draftNotificationEntity.ChannelTitle,
                     SentDate = null,
                     IsDraft = false,
                     IsImportant = draftNotificationEntity.IsImportant,
@@ -218,6 +220,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
                     Rosters = notificationEntity.Rosters,
                     AllUsers = notificationEntity.AllUsers,
                     ChannelId = notificationEntity.ChannelId,
+                    ChannelTitle = notificationEntity.ChannelTitle,
+                    ChannelImage = notificationEntity.ChannelImage,
                 };
 
                 await this.CreateOrUpdateAsync(newNotificationEntity);

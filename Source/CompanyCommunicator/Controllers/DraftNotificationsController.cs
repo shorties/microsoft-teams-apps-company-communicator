@@ -154,6 +154,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 ButtonTitle = notification.ButtonTitle,
                 ButtonLink = notification.ButtonLink,
                 ChannelId = notification.ChannelId,
+                ChannelImage = notification.ChannelImage,
+                ChannelTitle = notification.ChannelTitle,
                 CreatedBy = this.HttpContext.User?.Identity?.Name,
                 CreatedDate = DateTime.UtcNow,
                 IsDraft = true,
@@ -342,6 +344,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Controllers
                 ScheduledDate = notificationEntity.ScheduledDate,
                 Buttons = notificationEntity.Buttons,
                 ChannelId = notificationEntity.ChannelId,
+                ChannelTitle = notificationEntity.ChannelTitle,
+                ChannelImage = notificationEntity.ChannelImage,
             };
 
             return this.Ok(result);
