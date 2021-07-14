@@ -22,6 +22,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
     using Microsoft.Teams.Apps.CompanyCommunicator.Authentication;
     using Microsoft.Teams.Apps.CompanyCommunicator.Bot;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories;
+    using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.ChannelData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.ExportData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.GroupAssociationData;
     using Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.NotificationData;
@@ -169,6 +170,7 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator
             services.AddSingleton<IExportDataRepository, ExportDataRepository>();
             services.AddSingleton<IAppConfigRepository, AppConfigRepository>();
             services.AddSingleton<IGroupAssociationDataRepository, GroupAssociationDataRepository>();
+            services.AddSingleton<IChannelDataRepository, ChannelDataRepository>();
 
             // Add service bus message queues.
             services.AddSingleton<IPrepareToSendQueue, PrepareToSendQueue>();

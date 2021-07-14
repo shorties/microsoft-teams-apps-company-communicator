@@ -1,4 +1,4 @@
-﻿// <copyright file="GroupAssociationRepositoryExtension.cs" company="Microsoft">
+﻿// <copyright file="GroupAssociationRepositoryExtensions.cs" company="Microsoft">
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // </copyright>

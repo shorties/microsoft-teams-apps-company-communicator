@@ -1,13 +1,15 @@
-﻿import { ArrowRightIcon, TrashCanIcon } from '@fluentui/react-icons-northstar';
-import { Button, Dropdown, Flex, Image, Label, List, Text, Loader } from '@fluentui/react-northstar';
+﻿import { ArrowRightIcon, TrashCanIcon, FilesUploadIcon } from '@fluentui/react-icons-northstar';
+import { Button, Dropdown, Flex, Image, Layout, Label, List, Text, Loader, Input } from '@fluentui/react-northstar';
 import * as microsoftTeams from "@microsoft/teams-js";
 import { TFunction } from "i18next";
 import * as React from 'react';
 import { withTranslation, WithTranslation } from "react-i18next";
 import { RouteComponentProps } from 'react-router-dom';
-import { createGroupAssociation, searchGroups, getGroupAssociations, deleteGroupAssociation } from "../../apis/messageListApi";
+import { createGroupAssociation, searchGroups, getGroupAssociations, deleteGroupAssociation, updateChannelConfig, getChannelConfig } from "../../apis/messageListApi";
 import { ImageUtil } from '../../utility/imageutility';
 import './ManageGroups.scss';
+import Resizer from 'react-image-file-resizer';
+
 
 type dropdownItem = {
     key: string,
@@ -26,6 +28,12 @@ export interface IGroup {
     ChannelId?: string,
 }
 
+export interface IChannel {
+    ChannelId: string,
+    ChannelTitle: string,
+    ChannelImage: string,
+}
+
 export interface formState {
     loading: boolean,
     loader: boolean,
@@ -41,6 +49,9 @@ export interface formState {
     allGroups: dropdownItem[],
     allGroupsNum: number,
     groupAlreadyIncluded: boolean,
+    imageLink?: string,
+    errorImageUrlMessage: string,
+    channelTitle?: string,
 }
 
 export interface IManageGroupsProps extends RouteComponentProps, WithTranslation {
@@ -50,12 +61,14 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
     readonly localize: TFunction;
     targetingEnabled: boolean; // property to store value indicating if the targeting mode is enabled or not
     masterAdminUpns: string; // property to store value with the master admins
+    fileInput: any;
 
     constructor(props: IManageGroupsProps) {
         super(props);
         this.localize = this.props.t;
         this.targetingEnabled = false; // by default targeting is disabled
         this.masterAdminUpns = "";
+
         this.state = {
             loading: false,
             loader: true,
@@ -70,8 +83,13 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
             selectedGroupsNum: 0,
             allGroups: [],
             allGroupsNum: 0,
+            imageLink: "",
+            errorImageUrlMessage: "",
+            channelTitle: "",
         }
         this.escFunction = this.escFunction.bind(this);
+        this.fileInput = React.createRef();
+        this.handleImageSelection = this.handleImageSelection.bind(this);
     }
 
     public componentDidMount() {
@@ -90,8 +108,10 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
 
             //get all associated groups and set the allGroups and allGroupsNum state
             this.getAllGroupsAssociated();
+
+            //get the channel configuration from the database
+            this.GetChannelInfo(context.channelId);
         });
-        
     }
 
     public componentWillUnmount() {
@@ -118,6 +138,43 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
         }
     }
 
+    //function to handle the selection of the OS file upload box
+    private handleImageSelection() {
+        //get the first file selected
+        const file = this.fileInput.current.files[0];
+        if (file) { //if we have a file
+            //resize the image to fit in the adaptivecard
+            Resizer.imageFileResizer(file, 100, 100, 'JPEG', 100, 0,
+                uri => {
+                    if (uri.toString().length < 30720) {
+                        //lets set the state with the image value
+                        this.setState({
+                            imageLink: uri.toString()
+                        }
+                        );
+                    } else {
+                        //images bigger than 32K cannot be saved, set the error message to be presented
+                        this.setState({
+                            errorImageUrlMessage: this.localize("ErrorImageTooBig")
+                        });
+                    }
+
+                },
+                'base64'); //we need the image in base64
+        }
+    }
+
+    //Function calling a click event on a hidden file input
+    private handleUploadClick = (event: any) => {
+        //reset the error message and the image link as the upload will reset them potentially
+        this.setState({
+            errorImageUrlMessage: "",
+            imageLink: ""
+        });
+        //fire the fileinput click event and run the handleimageselection function
+        this.fileInput.current.click();
+    };
+
     private renderPage = () => {
         return (
             <div className="taskModule">
@@ -131,6 +188,45 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
                                     <Label circular content={this.state.channelName} />
                                 </div>
                                 <div>
+                                    <Text content={this.localize("CardImage")} />
+                                </div>
+                                <div style={{ minHeight: 100, maxHeight: 100, minWidth: 100, maxWidth: 100}}>
+                                    <Image fluid src={this.state.imageLink} />
+                                </div>
+                                <div style={{ minHeight: 40 }}>
+                                    <Flex gap="gap.smaller" vAlign="end" className="inputField">
+                                    <Input
+                                        value={this.state.imageLink}
+                                        placeholder={this.localize("ImageURLPlaceHolder")}
+                                        onChange={this.onImageLinkChanged}
+                                        error={!(this.state.errorImageUrlMessage === "")}
+                                        autoComplete="off"
+                                        fluid
+                                    />
+                                    <input type="file" accept="image/"
+                                        style={{ display: 'none' }}
+                                        onChange={this.handleImageSelection}
+                                        ref={this.fileInput} />
+                                    <Flex.Item push>
+                                        <Button circular onClick={this.handleUploadClick}
+                                            size="small"
+                                            icon={<FilesUploadIcon />}
+                                            title={this.localize("UploadImage")}
+                                        />
+                                        </Flex.Item>
+                                        
+                                    </Flex>
+                                </div>
+                                <div style={{ minHeight: 60 }}>
+                                    <Input
+                                        value={this.state.channelTitle}
+                                        onChange={this.onChannelTitleChange}
+                                        label={this.localize("CardTitle")}
+                                        fluid
+                                    />
+                                </div>
+                                <div>
+                                    <Text content={this.localize("TargetGroups")} />
                                     <Flex gap="gap.small">
                                         <Dropdown
                                             search
@@ -145,6 +241,7 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
                                             multiple
                                         />
                                         <Flex.Item><Button content="Add" icon={<ArrowRightIcon />} iconPosition="after" text onClick={this.onAddGroups} /></Flex.Item>
+                                        
                                     </Flex>
                                 </div>
                                 <div className={this.state.groupAlreadyIncluded ? "ErrorMessage" : "hide"}>
@@ -155,9 +252,13 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
                             </Flex>
                         </Flex.Item>
                         <Flex.Item size="size.half">
-                            <div className="scrollableContent">
-                                <List items={this.state.allGroups} selectable />
+                            <div>
+                                <Text align="center" content={this.localize("TargetGroups") + ' for ' + this.state.teamName + '/' + this.state.channelName} />
+                                <div className="scrollableContent">
+                                    <List items={this.state.allGroups} selectable />
+                                </div>
                             </div>
+                                
                         </Flex.Item>
                     </Flex>
                 </Flex>
@@ -170,8 +271,47 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
         );
     }
 
-    private onClose() {
-        microsoftTeams.tasks.submitTask();
+    private onClose = () => {
+        //collects values from state and build the draftChannel
+        const draftChannel: IChannel = {
+            ChannelImage: this.state.imageLink,
+            ChannelId: this.state.channelId,
+            ChannelTitle: this.state.channelTitle
+        }
+
+        //update the channel configuration and submit the task 
+        this.UpdateChannelConfig(draftChannel).then(() => {
+            microsoftTeams.tasks.submitTask();
+        });
+    }
+
+    //update or create a new channel configuration based on draftChannel
+    private UpdateChannelConfig = async (draftChannel: IChannel) => {
+        try {
+            await updateChannelConfig(draftChannel);
+        } catch (error) {
+            return error;
+        }
+    }
+
+    //get the channel configuration 
+    private GetChannelInfo = async (channelid: string) => {
+        try {
+            const response = await getChannelConfig(channelid);
+            const draftChannel = response.data;
+            this.setState({
+                imageLink: draftChannel.channelImage,
+                channelTitle: draftChannel.channelTitle,
+            });
+        } catch (error) {
+            return error;
+        }
+    }
+
+    private onChannelTitleChange = (event: any) => {
+        this.setState({
+            channelTitle: event.target.value,
+        });
     }
 
     private getGroupItems() {
@@ -180,6 +320,23 @@ class ManageGroups extends React.Component<IManageGroupsProps, formState> {
         }
         const dropdownItems: dropdownItem[] = [];
         return dropdownItems;
+    }
+
+    private onImageLinkChanged = (event: any) => {
+        let url = event.target.value.toLowerCase();
+        if (!((url === "") || (url.startsWith("https://") || (url.startsWith("data:image/png;base64,")) || (url.startsWith("data:image/jpeg;base64,")) || (url.startsWith("data:image/gif;base64,"))))) {
+            this.setState({
+                errorImageUrlMessage: this.localize("ErrorURLMessage")
+            });
+        } else {
+            this.setState({
+                errorImageUrlMessage: ""
+            });
+        }
+
+        this.setState({
+            imageLink: event.target.value,
+        });
     }
 
     private makeDropdownItems = (items: any[] | undefined) => {

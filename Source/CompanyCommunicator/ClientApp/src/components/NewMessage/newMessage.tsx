@@ -11,8 +11,8 @@ import * as microsoftTeams from "@microsoft/teams-js";
 import Resizer from 'react-image-file-resizer';
 import './newMessage.scss';
 import './teamTheme.scss';
-import { getDraftNotification, getTeams, createDraftNotification, updateDraftNotification, searchGroups, getGroups, getGroupAssociations, verifyGroupAccess, getAppSettings } from '../../apis/messageListApi';
-import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns } from '../AdaptiveCard/adaptiveCard';
+import { getDraftNotification, getTeams, createDraftNotification, updateDraftNotification, searchGroups, getGroups, getGroupAssociations, verifyGroupAccess, getAppSettings, getChannelConfig } from '../../apis/messageListApi';
+import { getInitAdaptiveCard, setCardTitle, setCardImageLink, setCardSummary, setCardAuthor, setCardBtns, setCardTarget, setCardTargetImage, setCardTargetTitle } from '../AdaptiveCard/adaptiveCard';
 import { getBaseUrl } from '../../configVariables';
 import { ImageUtil } from '../../utility/imageutility';
 import { TFunction } from "i18next";
@@ -55,7 +55,9 @@ export interface IDraftMessage {
     isScheduled: boolean, // indicates if the message is scheduled
     ScheduledDate: Date, // stores the scheduled date
     Buttons: string, // stores the card buttons (JSON)
-    channelId?: string // id of the channel where the message was created
+    channelId?: string, // id of the channel where the message was created
+    channelTitle?: string,
+    channelImage?: string
 }
 
 export interface formState {
@@ -100,7 +102,9 @@ export interface formState {
     channelId?: string //id of the channel where the message was created
     channelName?: string,
     teamName?: string,
-    userPrincipalName?: string
+    userPrincipalName?: string,
+    channelTitle?: string, //channel title to be used on the customized card, if targeting is enabled
+    channelImage?: string, //channel image to be used on the customized card, if targeting is enabled
 }
 
 export interface INewMessageProps extends RouteComponentProps, WithTranslation {
@@ -159,6 +163,8 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             DMYMins: this.getDateMins(TempDate.toUTCString()), //initialize with the current minute (rounded up)
             futuredate: false, //by default the date is not in the future
             values: [], //by default there are no buttons on the adaptive card
+            channelTitle: "", 
+            channelImage: "",
         }
         this.fileInput = React.createRef();
         this.handleImageSelection = this.handleImageSelection.bind(this);
@@ -179,9 +185,17 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
                 teamName: context.teamName,
                 userPrincipalName: context.userPrincipalName
             });
+
+            //get the channel configuration from the database
+            this.GetChannelInfo(context.channelId).then(() => {
+                setCardTargetImage(this.card, this.state.channelImage);
+                setCardTargetTitle(this.card, this.state.channelTitle);
+                
+            });
         });
 
         this.getAppSettings().then(() => {
+            setCardTarget(this.card, this.targetingEnabled);
             this.getTeamList().then(() => {
                 if ('id' in params) {
                     let id = params['id'];
@@ -253,6 +267,23 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
         }
 
         return ret;
+    }
+
+    //get the channel configuration 
+    private GetChannelInfo = async (channelid: string) => {
+        try {
+
+            const response = await getChannelConfig(channelid);
+            const draftChannel = response.data;
+
+            this.setState({
+                channelImage: draftChannel.channelImage,
+                channelTitle: draftChannel.channelTitle,
+            });
+
+        } catch (error) {
+            return error;
+        }
     }
 
     //function to handle the selection of the OS file upload box
@@ -1109,7 +1140,9 @@ class NewMessage extends React.Component<INewMessageProps, formState> {
             isImportant: this.state.selectedImportant,
             ScheduledDate: new Date(this.state.scheduledDate),
             Buttons: JSON.stringify(this.state.values),
-            channelId: this.state.channelId
+            channelId: this.state.channelId,
+            channelImage: this.state.channelImage,
+            channelTitle: this.state.channelTitle
         };
 
         if (this.state.exists) {

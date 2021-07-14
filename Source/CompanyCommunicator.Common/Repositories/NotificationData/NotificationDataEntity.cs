@@ -92,6 +92,16 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.Notificat
         public string ChannelId { get; set; }
 
         /// <summary>
+        /// Gets or sets the ChannelTitle value.
+        /// </summary>
+        public string ChannelTitle { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ChannelImage value.
+        /// </summary>
+        public string ChannelImage { get; set; }
+
+        /// <summary>
         /// Gets or sets a value with the JSON describing the buttons for the adaptive card.
         /// </summary>
         public string Buttons { get; set; }

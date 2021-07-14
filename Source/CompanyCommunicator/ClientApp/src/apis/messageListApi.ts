@@ -110,6 +110,16 @@ export const getGroupAssociations = async (channelId: string): Promise<any> => {
     return await axios.get(url);
 }
 
+export const getChannelConfig = async (channelId: string): Promise<any> => {
+    let url = baseAxiosUrl + "/channels/" + channelId;
+    return await axios.get(url);
+}
+
+export const updateChannelConfig = async (payload: {}): Promise<any> => {
+    let url = baseAxiosUrl + "/channels";
+    return await axios.put(url, payload);
+}
+
 export const getTeams = async (): Promise<any> => {
     let url = baseAxiosUrl + "/teamdata";
     return await axios.get(url);

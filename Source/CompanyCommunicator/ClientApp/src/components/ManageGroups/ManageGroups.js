@@ -7,6 +7,8 @@ var __extends = (this && this.__extends) || (function () {
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -57,10 +59,21 @@ var react_i18next_1 = require("react-i18next");
 var messageListApi_1 = require("../../apis/messageListApi");
 var imageutility_1 = require("../../utility/imageutility");
 require("./ManageGroups.scss");
+var react_image_file_resizer_1 = require("react-image-file-resizer");
 var ManageGroups = /** @class */ (function (_super) {
     __extends(ManageGroups, _super);
     function ManageGroups(props) {
         var _this = _super.call(this, props) || this;
+        //Function calling a click event on a hidden file input
+        _this.handleUploadClick = function (event) {
+            //reset the error message and the image link as the upload will reset them potentially
+            _this.setState({
+                errorImageUrlMessage: "",
+                imageLink: ""
+            });
+            //fire the fileinput click event and run the handleimageselection function
+            _this.fileInput.current.click();
+        };
         _this.renderPage = function () {
             return (React.createElement("div", { className: "taskModule" },
                 React.createElement(react_northstar_1.Flex, { column: true, className: "formContainer", vAlign: "stretch", gap: "gap.small", styles: { background: "white" } },
@@ -72,6 +85,19 @@ var ManageGroups = /** @class */ (function (_super) {
                                     React.createElement(react_northstar_1.Label, { circular: true, content: _this.state.teamName }),
                                     React.createElement(react_northstar_1.Label, { circular: true, content: _this.state.channelName })),
                                 React.createElement("div", null,
+                                    React.createElement(react_northstar_1.Text, { content: _this.localize("CardImage") })),
+                                React.createElement("div", { style: { minHeight: 100, maxHeight: 100, minWidth: 100, maxWidth: 100 } },
+                                    React.createElement(react_northstar_1.Image, { fluid: true, src: _this.state.imageLink })),
+                                React.createElement("div", { style: { minHeight: 40 } },
+                                    React.createElement(react_northstar_1.Flex, { gap: "gap.smaller", vAlign: "end", className: "inputField" },
+                                        React.createElement(react_northstar_1.Input, { value: _this.state.imageLink, placeholder: _this.localize("ImageURLPlaceHolder"), onChange: _this.onImageLinkChanged, error: !(_this.state.errorImageUrlMessage === ""), autoComplete: "off", fluid: true }),
+                                        React.createElement("input", { type: "file", accept: "image/", style: { display: 'none' }, onChange: _this.handleImageSelection, ref: _this.fileInput }),
+                                        React.createElement(react_northstar_1.Flex.Item, { push: true },
+                                            React.createElement(react_northstar_1.Button, { circular: true, onClick: _this.handleUploadClick, size: "small", icon: React.createElement(react_icons_northstar_1.FilesUploadIcon, null), title: _this.localize("UploadImage") })))),
+                                React.createElement("div", { style: { minHeight: 60 } },
+                                    React.createElement(react_northstar_1.Input, { value: _this.state.channelTitle, onChange: _this.onChannelTitleChange, label: _this.localize("CardTitle"), fluid: true })),
+                                React.createElement("div", null,
+                                    React.createElement(react_northstar_1.Text, { content: _this.localize("TargetGroups") }),
                                     React.createElement(react_northstar_1.Flex, { gap: "gap.small" },
                                         React.createElement(react_northstar_1.Dropdown, { search: true, placeholder: _this.localize("SendToGroupsPlaceHolder"), loadingMessage: _this.localize("LoadingText"), onSearchQueryChange: _this.onGroupSearchQueryChange, noResultsMessage: _this.state.noResultMessage, loading: _this.state.loading, items: _this.getGroupItems(), onChange: _this.onGroupsChange, value: _this.state.selectedGroups, multiple: true }),
                                         React.createElement(react_northstar_1.Flex.Item, null,
@@ -80,11 +106,87 @@ var ManageGroups = /** @class */ (function (_super) {
                                     React.createElement("div", { className: "noteText" },
                                         React.createElement(react_northstar_1.Text, { error: true, content: _this.localize('GroupAlreadyIncluded') }))))),
                         React.createElement(react_northstar_1.Flex.Item, { size: "size.half" },
-                            React.createElement("div", { className: "scrollableContent" },
-                                React.createElement(react_northstar_1.List, { items: _this.state.allGroups, selectable: true }))))),
+                            React.createElement("div", null,
+                                React.createElement(react_northstar_1.Text, { align: "center", content: _this.localize("TargetGroups") + ' for ' + _this.state.teamName + '/' + _this.state.channelName }),
+                                React.createElement("div", { className: "scrollableContent" },
+                                    React.createElement(react_northstar_1.List, { items: _this.state.allGroups, selectable: true })))))),
                 React.createElement(react_northstar_1.Flex, { className: "footerContainer", vAlign: "end", hAlign: "end" },
                     React.createElement(react_northstar_1.Flex, { className: "buttonContainer", gap: "gap.medium" },
                         React.createElement(react_northstar_1.Button, { content: _this.localize('CloseText'), onClick: _this.onClose })))));
+        };
+        _this.onClose = function () {
+            //collects values from state and build the draftChannel
+            var draftChannel = {
+                ChannelImage: _this.state.imageLink,
+                ChannelId: _this.state.channelId,
+                ChannelTitle: _this.state.channelTitle
+            };
+            //update the channel configuration and submit the task 
+            _this.UpdateChannelConfig(draftChannel).then(function () {
+                microsoftTeams.tasks.submitTask();
+            });
+        };
+        //update or create a new channel configuration based on draftChannel
+        _this.UpdateChannelConfig = function (draftChannel) { return __awaiter(_this, void 0, void 0, function () {
+            var error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, messageListApi_1.updateChannelConfig(draftChannel)];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_1 = _a.sent();
+                        return [2 /*return*/, error_1];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        //get the channel configuration 
+        _this.GetChannelInfo = function (channelid) { return __awaiter(_this, void 0, void 0, function () {
+            var response, draftChannel, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [4 /*yield*/, messageListApi_1.getChannelConfig(channelid)];
+                    case 1:
+                        response = _a.sent();
+                        draftChannel = response.data;
+                        this.setState({
+                            imageLink: draftChannel.channelImage,
+                            channelTitle: draftChannel.channelTitle,
+                        });
+                        return [3 /*break*/, 3];
+                    case 2:
+                        error_2 = _a.sent();
+                        return [2 /*return*/, error_2];
+                    case 3: return [2 /*return*/];
+                }
+            });
+        }); };
+        _this.onChannelTitleChange = function (event) {
+            _this.setState({
+                channelTitle: event.target.value,
+            });
+        };
+        _this.onImageLinkChanged = function (event) {
+            var url = event.target.value.toLowerCase();
+            if (!((url === "") || (url.startsWith("https://") || (url.startsWith("data:image/png;base64,")) || (url.startsWith("data:image/jpeg;base64,")) || (url.startsWith("data:image/gif;base64,"))))) {
+                _this.setState({
+                    errorImageUrlMessage: _this.localize("ErrorURLMessage")
+                });
+            }
+            else {
+                _this.setState({
+                    errorImageUrlMessage: ""
+                });
+            }
+            _this.setState({
+                imageLink: event.target.value,
+            });
         };
         _this.makeDropdownItems = function (items) {
             var resultedTeams = [];
@@ -137,7 +239,7 @@ var ManageGroups = /** @class */ (function (_super) {
             });
         };
         _this.deleteGroup = function (key) { return __awaiter(_this, void 0, void 0, function () {
-            var error_1;
+            var error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -147,14 +249,14 @@ var ManageGroups = /** @class */ (function (_super) {
                         _a.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, error_1];
+                        error_3 = _a.sent();
+                        return [2 /*return*/, error_3];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
         _this.saveGroup = function (draftGroup) { return __awaiter(_this, void 0, void 0, function () {
-            var error_2;
+            var error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -164,14 +266,14 @@ var ManageGroups = /** @class */ (function (_super) {
                         _a.sent();
                         return [3 /*break*/, 3];
                     case 2:
-                        error_2 = _a.sent();
-                        return [2 /*return*/, error_2];
+                        error_4 = _a.sent();
+                        return [2 /*return*/, error_4];
                     case 3: return [2 /*return*/];
                 }
             });
         }); };
         _this.getAllGroupsAssociated = function () { return __awaiter(_this, void 0, void 0, function () {
-            var resultListItems, response, inputGroups, x, error_3;
+            var resultListItems, response, inputGroups, x, error_5;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -203,8 +305,8 @@ var ManageGroups = /** @class */ (function (_super) {
                         });
                         return [3 /*break*/, 4];
                     case 3:
-                        error_3 = _a.sent();
-                        return [2 /*return*/, error_3];
+                        error_5 = _a.sent();
+                        return [2 /*return*/, error_5];
                     case 4: return [2 /*return*/];
                 }
             });
@@ -218,7 +320,7 @@ var ManageGroups = /** @class */ (function (_super) {
             });
         };
         _this.onGroupSearchQueryChange = function (event, itemsData) { return __awaiter(_this, void 0, void 0, function () {
-            var result, query, response, error_4;
+            var result, query, response, error_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -259,8 +361,8 @@ var ManageGroups = /** @class */ (function (_super) {
                         });
                         return [3 /*break*/, 6];
                     case 5:
-                        error_4 = _a.sent();
-                        return [2 /*return*/, error_4];
+                        error_6 = _a.sent();
+                        return [2 /*return*/, error_6];
                     case 6: return [2 /*return*/];
                 }
             });
@@ -282,8 +384,13 @@ var ManageGroups = /** @class */ (function (_super) {
             selectedGroupsNum: 0,
             allGroups: [],
             allGroupsNum: 0,
+            imageLink: "",
+            errorImageUrlMessage: "",
+            channelTitle: "",
         };
         _this.escFunction = _this.escFunction.bind(_this);
+        _this.fileInput = React.createRef();
+        _this.handleImageSelection = _this.handleImageSelection.bind(_this);
         return _this;
     }
     ManageGroups.prototype.componentDidMount = function () {
@@ -300,6 +407,8 @@ var ManageGroups = /** @class */ (function (_super) {
             });
             //get all associated groups and set the allGroups and allGroupsNum state
             _this.getAllGroupsAssociated();
+            //get the channel configuration from the database
+            _this.GetChannelInfo(context.channelId);
         });
     };
     ManageGroups.prototype.componentWillUnmount = function () {
@@ -318,8 +427,28 @@ var ManageGroups = /** @class */ (function (_super) {
             microsoftTeams.tasks.submitTask();
         }
     };
-    ManageGroups.prototype.onClose = function () {
-        microsoftTeams.tasks.submitTask();
+    //function to handle the selection of the OS file upload box
+    ManageGroups.prototype.handleImageSelection = function () {
+        var _this = this;
+        //get the first file selected
+        var file = this.fileInput.current.files[0];
+        if (file) { //if we have a file
+            //resize the image to fit in the adaptivecard
+            react_image_file_resizer_1.default.imageFileResizer(file, 100, 100, 'JPEG', 100, 0, function (uri) {
+                if (uri.toString().length < 30720) {
+                    //lets set the state with the image value
+                    _this.setState({
+                        imageLink: uri.toString()
+                    });
+                }
+                else {
+                    //images bigger than 32K cannot be saved, set the error message to be presented
+                    _this.setState({
+                        errorImageUrlMessage: _this.localize("ErrorImageTooBig")
+                    });
+                }
+            }, 'base64'); //we need the image in base64
+        }
     };
     ManageGroups.prototype.getGroupItems = function () {
         if (this.state.groups) {

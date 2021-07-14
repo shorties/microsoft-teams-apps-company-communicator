@@ -41,6 +41,8 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Repositories.Extensions
                 ButtonTitle = notification.ButtonTitle,
                 ButtonLink = notification.ButtonLink,
                 ChannelId = notification.ChannelId,
+                ChannelImage = notification.ChannelImage,
+                ChannelTitle = notification.ChannelTitle,
                 CreatedBy = userName,
                 CreatedDate = DateTime.UtcNow,
                 IsDraft = true,

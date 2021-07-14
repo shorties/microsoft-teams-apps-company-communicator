@@ -105,6 +105,8 @@
   "ConfigSave": "Please click Save to get started.",
   "TargetingNotAuthorized": "You are not authorized to setup Company Communicator in targeting mode. Please contact one of the master admins.",
   "ManageGroups": "Manage Groups",
-  "GroupAlreadyIncluded": "The group is already associated to this channel."
-
+  "GroupAlreadyIncluded": "The group is already associated to this channel.",
+  "CardTitle": "Card Title",
+  "CardImage": "Card Image",
+  "TargetGroups": "Target Groups"
 }

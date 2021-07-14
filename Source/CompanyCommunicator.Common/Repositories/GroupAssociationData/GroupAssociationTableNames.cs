@@ -21,5 +21,3 @@ namespace Microsoft.Teams.Apps.CompanyCommunicator.Common.Repositories.GroupAsso
         public static readonly string GroupDataPartition = "GroupData";
     }
 }
-
-
